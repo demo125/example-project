@@ -62,8 +62,6 @@ defs = Definitions(
         model_predict_from_path,
     ],
     jobs=[training_asset_job, prediction_asset_job],
-    # jobs=[fetch_chastia_metadata, store_tables_to_parquet, store_tables_to_lake],
-    # sensors=[fetch_chastia_metadata_job_sensor, detect_chastia_parquet_job_sensor],
     resources={
         "dvc_fs_resource": DVCFileSystemResource(),
         "mlflow": mlflow_resoruce

@@ -135,7 +135,7 @@ def model_predict_from_registry(
 def model_predict_from_path(
     context: AssetExecutionContext, config: Configs, mlflow: ConfigurableResource
 ) -> Output[list[str]]:
-    classifier = mlflow.sklearn.load_model(config.model_path)
+    classifier = mlflow.sklearn.load_model(config.run_model_path)
     return predict_model(
         context=context, classifier=classifier, csv_data=config.csv_data
     )

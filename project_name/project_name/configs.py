@@ -4,7 +4,7 @@ from dagster import Config
 class Configs(Config):
     train_split_size: float = 0.8
 
-    model_path: str = "runs:/29c78d43962247c284fef36cb439a2af/model"
+    run_model_path: str = "runs:/29c78d43962247c284fef36cb439a2af/model"
 
     registry_model_name: str = "iris_model"
     registry_model_version: str = "Staging"

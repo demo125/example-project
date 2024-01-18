@@ -23,17 +23,6 @@ s3:
 ```
 export AWS_ACCESS_KEY_ID=s4yZ4wDOIRTrW3zMkRmz
 export AWS_SECRET_ACCESS_KEY=ZoPjYOLdHveRGhqenAKyV3cFLIEeD9obZYMXzUTq
-
-# export MLFLOW_TRACKING_URI=http://192.168.2.150:5035/
-# export MLFLOW_S3_ENDPOINT_URL=http://192.168.2.150:9000
-# export AWS_ACCESS_KEY_ID=amr-user
-# export AWS_SECRET_ACCESS_KEY=amr-user
-# export BACKEND_STORE_URI="postgresql://mlflow_user:mlflow@localhost:5432/mlflow_db"
-# export MINIO_ROOT_USER=minioadmin
-# export MINIO_ROOT_PASSWORD=CsxpIFl4NT8O1RuLN20e
-# export MLFLOW_TRACKING_USERNAME=mlflowadmin
-# export MLFLOW_TRACKING_PASSWORD=5qheS9140fJxL0uCrTa8
-
 ```
 
 Create new code location
@@ -41,3 +30,8 @@ Create new code location
 dagster project scaffold-code-location --name <project_name>
 ```
 
+# Run dagster job via cli
+
+```
+dagster job execute -m project_name --job train_model -d project_name/
+```
