@@ -15,13 +15,14 @@ ARG USER_GID=$USER_UID
 RUN groupadd --gid $USER_GID $USERNAME && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME 
 RUN usermod -aG sudo vscode
 RUN apt-get update
-USER $USERNAME
 
 ENV PROJECT_DIR=/home/$USERNAME/example-project
 WORKDIR $PROJECT_DIR
 
 ENV DAGSTER_HOME=$PROJECT_DIR/dagster_home
 RUN mkdir -p $DAGSTER_HOME
+
+USER $USERNAME
 
 
 
