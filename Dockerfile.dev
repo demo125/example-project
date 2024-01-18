@@ -25,7 +25,7 @@ RUN chown -R $USERNAME:$USERNAME $PROJECT_DIR
 
 USER $USERNAME
 
-COPY requirements.txt $PROJECT_DIR
+ADD requirements.txt $PROJECT_DIR
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN pip install -r $PROJECT_DIR/requirements.txt 
@@ -34,7 +34,7 @@ RUN pip install -r $PROJECT_DIR/requirements.txt
 RUN pip install dvc==3.0.0 dvc-s3 black==22.6.0 isort==5.13.2
 
 # RUN echo "root:password" | chpasswd
-COPY . $PROJECT_DIR
+ADD . $PROJECT_DIR
 USER root
 RUN apt-get install git -y
 
