@@ -18,4 +18,26 @@
     "isort.interpreter": [
         "/opt/conda/bin/python"
     ],
+    "terminal.integrated.defaultProfile.linux": "bash",
+    "terminal.integrated.profiles.linux": {
+        "zsh": {
+            "path": "/usr/bin/bash"
+        }
+    },
+    "jenkins-runner.hostConfigs": {
+        "master": {
+            "isDefault": true,
+            "url": "https://jenkins.localhost:11443",
+            "user": "user"
+        }
+    },
+    "jenkins-runner.jobs": {
+        "test1": {
+            "isDefault": true,
+            "runWith": [
+                "master"
+            ],
+            "name": "example-project",
+        },
+    }
 }

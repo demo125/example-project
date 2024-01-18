@@ -3,18 +3,22 @@ Dev container must be in the same network as k3d containers:
 Add to devcontainer.json or with ``ocker network connect` command
 ```
 "runArgs": [
-    "--network=<network_name>",
+    "--network=host",
 ],
 ```
-Port forward
+# Add certificate to the dev container
+Download the certificate
 ```
-ssh -L localhost:443:localhost:<port exposed by k3d> <user>@<ip>
-eg:
-ssh -L localhost:443:localhost:11443 mde@10.201.50.246
+export JENKINS_URL=jenkins.localhost:11443
+openssl s_client -showcerts -connect $JENKINS_URL </dev/null | sed -n -e '/-.BEGIN/,/-.END/ p' > /usr/local/share/ca-certificates/my-selfsigned-cert-jenkins.crt
+update-ca-certificates
+curl https://$JENKINS_URL
 ```
+
+
 Test:
 ```
-curl https://minio-backend.localhost/ --insecure
+curl https://minio-backend.localhost:11443/ --insecure
 ```
 Should get you acess denied - s3 backend does not accept http, which is ok
 

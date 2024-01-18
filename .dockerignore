@@ -1,2 +1,3 @@
 .env
-dagster_home
+dagster_home/
+data

@@ -3,7 +3,7 @@
 {
 	"name": "Python 3",
 	"build": {
-		"dockerfile": "Dockerfile.dev",
+		"dockerfile": "../Dockerfile.dev",
 		"context": "..",
 		"args": {
 			// Update 'VARIANT' to pick a Python version: 3, 3.10, 3.9, 3.8, 3.7, 3.6
@@ -16,7 +16,7 @@
 	},
 	"runArgs": [
 		"--gpus=all",
-		"--network=k3d-mlops-platform",
+		"--network=host",
 		"--shm-size=8gb"
 	],
 	// Configure tool-specific properties.
@@ -48,7 +48,9 @@
 				"ms-python.python",
 				"ms-python.vscode-pylance",
 				"ms-python.black-formatter",
-				"ms-python.isort"
+				"ms-python.isort",
+				"janjoerke.jenkins-pipeline-linter-connector",
+				"dave-hagedorn.jenkins-runner"
 			]
 		}
 	},

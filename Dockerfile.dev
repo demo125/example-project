@@ -1,0 +1,43 @@
+FROM pytorch/pytorch:2.1.2-cuda12.1-cudnn8-devel
+
+RUN apt-get update
+RUN python3 -m pip install --upgrade pip
+
+#edit tmp folder
+RUN chmod 1777 /tmp
+RUN chmod 1777 /var/tmp
+
+#create vscode user
+ARG USERNAME=vscode
+ARG USER_UID=1000
+ARG USER_GID=$USER_UID
+RUN groupadd --gid $USER_GID $USERNAME && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME 
+RUN usermod -aG sudo vscode
+RUN apt-get update
+USER $USERNAME
+
+ENV PROJECT_DIR=/home/$USERNAME/example-project
+WORKDIR $PROJECT_DIR
+
+ENV DAGSTER_HOME=$PROJECT_DIR/dagster_home
+RUN mkdir -p $DAGSTER_HOME
+
+
+
+COPY requirements.txt $PROJECT_DIR
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN pip install -r $PROJECT_DIR/requirements.txt 
+
+#install dev tools
+RUN pip install dvc==3.0.0 dvc-s3 black==22.6.0 isort==5.13.2
+
+# RUN echo "root:password" | chpasswd
+COPY . $PROJECT_DIR
+USER root
+RUN apt-get install git -y
+RUN chown -R $USERNAME:$USERNAME $PROJECT_DIR
+
+
+USER $USERNAME
+ENV PATH $PATH:/home/$USERNAME/.local/bin
