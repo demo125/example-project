@@ -1,4 +1,5 @@
-FROM pytorch/pytorch:2.1.2-cuda12.1-cudnn8-devel
+# FROM pytorch/pytorch:2.1.2-cuda12.1-cudnn8-devel
+FROM python:3.10-slim-bullseye
 
 RUN apt-get update
 RUN python3 -m pip install --upgrade pip
@@ -37,7 +38,6 @@ COPY . $PROJECT_DIR
 USER root
 RUN apt-get install git -y
 RUN chown -R $USERNAME:$USERNAME $PROJECT_DIR
-
 
 USER $USERNAME
 ENV PATH $PATH:/home/$USERNAME/.local/bin
