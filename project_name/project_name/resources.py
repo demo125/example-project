@@ -1,6 +1,7 @@
 from dagster import ConfigurableResource
 from dvc.api import DVCFileSystem
 
+
 class DVCFileSystemResource(ConfigurableResource):
     """Configurable resource providing connection to MSSQL and database list"""
 

@@ -1,0 +1,21 @@
+{
+    "[python]": {
+        "editor.formatOnType": true,
+        "editor.defaultFormatter": "ms-python.black-formatter",
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": "explicit",
+            "source.unusedImports": "explicit"
+        },
+    },
+    "window.zoomLevel": 0,
+    "black-formatter.interpreter": [
+        "/opt/conda/bin/python"
+    ],
+    "isort.args": [
+        "--profile",
+        "black"
+    ],
+    "isort.interpreter": [
+        "/opt/conda/bin/python"
+    ],
+}
