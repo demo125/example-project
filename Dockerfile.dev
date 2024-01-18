@@ -21,10 +21,9 @@ WORKDIR $PROJECT_DIR
 
 ENV DAGSTER_HOME=$PROJECT_DIR/dagster_home
 RUN mkdir -p $DAGSTER_HOME
+RUN chown -R $USERNAME:$USERNAME $PROJECT_DIR
 
 USER $USERNAME
-
-
 
 COPY requirements.txt $PROJECT_DIR
 ENV DEBIAN_FRONTEND=noninteractive
@@ -38,7 +37,6 @@ RUN pip install dvc==3.0.0 dvc-s3 black==22.6.0 isort==5.13.2
 COPY . $PROJECT_DIR
 USER root
 RUN apt-get install git -y
-RUN chown -R $USERNAME:$USERNAME $PROJECT_DIR
 
 USER $USERNAME
 ENV PATH $PATH:/home/$USERNAME/.local/bin
