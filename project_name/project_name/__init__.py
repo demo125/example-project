@@ -4,6 +4,8 @@ from dagster import AssetSelection, Definitions, define_asset_job
 from dagster_mlflow import mlflow_tracking
 from dotenv import load_dotenv
 
+from .utils import set_all_seeds
+
 # from .jobs import train_model
 from .assets import (
     classifier,
@@ -18,7 +20,7 @@ from .resources import DVCFileSystemResource
 
 # dagster loads .env file automatically, loading env manualy is needed for pytest test autodiscovery
 load_dotenv()
-
+set_all_seeds(int(os.getenv("SEED")))
 import git
 
 repo = git.Repo(search_parent_directories=True)
