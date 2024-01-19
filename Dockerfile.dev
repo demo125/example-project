@@ -3,7 +3,7 @@ FROM public.ecr.aws/docker/library/python:3.10-slim-bullseye
 
 RUN apt-get update
 RUN python3 -m pip install --upgrade pip
-
+RUN apt-get install git -y
 #edit tmp folder
 RUN chmod 1777 /tmp
 RUN chmod 1777 /var/tmp
@@ -20,12 +20,13 @@ ENV PROJECT_DIR=/home/$USERNAME/example-project
 WORKDIR $PROJECT_DIR
 
 ENV DAGSTER_HOME=$PROJECT_DIR/dagster_home
+
 RUN mkdir -p $DAGSTER_HOME
+ADD . $PROJECT_DIR
 RUN chown -R $USERNAME:$USERNAME $PROJECT_DIR
 
 USER $USERNAME
 
-ADD requirements.txt $PROJECT_DIR
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN pip install -r $PROJECT_DIR/requirements.txt 
@@ -34,9 +35,6 @@ RUN pip install -r $PROJECT_DIR/requirements.txt
 RUN pip install dvc==3.0.0 dvc-s3 black==22.6.0 isort==5.13.2
 
 # RUN echo "root:password" | chpasswd
-ADD . $PROJECT_DIR
-USER root
-RUN apt-get install git -y
 
-USER $USERNAME
+
 ENV PATH $PATH:/home/$USERNAME/.local/bin
