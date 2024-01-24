@@ -1,5 +1,14 @@
 pytest==7.4.4
 dagster==1.6.0
+dagster-postgres==0.22.0
+dagster-aws==0.22.0
+dagster-graphql==1.6.0
+dagster-k8s==0.22.0
+dagster-pipes==1.6.0
+dagster-postgres==0.22.0
+dagster-webserver==1.6.0
+dagster-celery==0.22.0
+dagster-celery-k8s==0.22.0
 mlflow==2.9.2
 dvc==3.39.0
 dvc-s3

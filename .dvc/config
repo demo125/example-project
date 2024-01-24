@@ -2,6 +2,6 @@
     remote = s3
 ['remote "s3"']
     url = s3://dvc-data/example-project
-    endpointurl = https://minio-backend.localhost/
+    endpointurl = https://minio-backend.mlplatform/
     ssl_verify = false
     region = us-east-2

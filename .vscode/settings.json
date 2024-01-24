@@ -7,7 +7,7 @@
             "source.unusedImports": "explicit"
         },
     },
-    "window.zoomLevel": 0,
+    "window.zoomLevel": -1,
     "black-formatter.interpreter": [
         "/opt/conda/bin/python"
     ],
@@ -27,7 +27,7 @@
     "jenkins-runner.hostConfigs": {
         "master": {
             "isDefault": true,
-            "url": "https://jenkins.localhost:11443",
+            "url": "https://jenkins.mlplatform:11443",
             "user": "user"
         }
     },
