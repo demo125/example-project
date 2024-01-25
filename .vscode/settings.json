@@ -7,16 +7,16 @@
             "source.unusedImports": "explicit"
         },
     },
-    "window.zoomLevel": -1,
+    "window.zoomLevel": 0,
     "black-formatter.interpreter": [
-        "/opt/conda/bin/python"
+        "/usr/local/bin/python"
     ],
     "isort.args": [
         "--profile",
         "black"
     ],
     "isort.interpreter": [
-        "/opt/conda/bin/python"
+        "/usr/local/bin/python"
     ],
     "terminal.integrated.defaultProfile.linux": "bash",
     "terminal.integrated.profiles.linux": {
