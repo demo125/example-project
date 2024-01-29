@@ -36,7 +36,7 @@ pipeline {
           sh 'git add values.yaml'
           script {
             sh """
-              git commit -m "Jenkins: updated dagster tag to ${BUILD_NUMBER} in dagster/base/values.yaml'
+              git commit -m "Jenkins: updated dagster tag to ${BUILD_NUMBER} in dagster/base/values.yaml"
             """
            }
           sh 'git push'
