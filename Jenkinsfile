@@ -28,7 +28,7 @@ pipeline {
         dir('dagster/base'){
           sh 'cat values.yaml | grep tag: '
           sh 'sed -i -E "s/(tag:[ ])[0-9]+([ ]+# SED-ANCHOR-DAGSTER-VERSION)/\1${BUILD_NUMBER}\2/" values.yaml'
-          // sh 'cat values.yaml | grep tag: '
+          sh 'cat values.yaml'
         }
       }
     }
