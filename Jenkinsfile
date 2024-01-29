@@ -6,8 +6,10 @@ pipeline {
   }
   stages {
     stage('ls') {
-      sh 'pwd'
-      sh 'ls -la'
+      steps {
+        sh 'pwd'
+        sh 'ls -la'
+      }
     }
     //   stage('Checkout') { 
     //     steps {
