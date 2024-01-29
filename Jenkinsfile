@@ -26,12 +26,13 @@ pipeline {
         sh 'ls'
         sh 'pwd'
         dir('dagster/base'){
-          bash 'cat values.yaml | grep tag: '
-          bash 'echo "sed -i -E \"s/(tag:[ ])[0-9]+([ ]+# SED-ANCHOR-DAGSTER-VERSION)/\\1307\\2/\" values.yaml" > sed-command.sh'
-          bash 'cat sed-command.sh'
-          bash 'bash sed-command.sh'
-          bash 'cat values.yaml | grep tag: '
-          bash 'rm sed-command.sh'
+          sh 'cat values.yaml | grep tag: '
+          script {
+              sh """
+                  sed -i -E 's/(tag:[ ])[0-9]+([ ]+# SED-ANCHOR-DAGSTER-VERSION)/\\1${BUILD_NUMBER}\\2/' values.yaml
+              """
+          }
+          sh 'cat values.yaml | grep tag: '
         }
       }
     }
