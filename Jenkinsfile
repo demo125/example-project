@@ -24,7 +24,8 @@ pipeline {
             userRemoteConfigs: [[url: 'https://github.com/demo125/mlops-platform.git']]]
         )
         sh 'ls'
-        dir('mlops-platform/dagster/base'){
+        sh 'pwd'
+        dir('dagster/base'){
           sh 'cat values.yaml | grep tag: '
           sh "sed -E 's/(tag:[ ])[0-9]+([ ]+# SED-ANCHOR-DAGSTER-VERSION)/\137\2/' values.yaml"
           sh 'cat values.yaml | grep tag: '
