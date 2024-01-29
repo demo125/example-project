@@ -43,7 +43,7 @@ pipeline {
             credentialsId: 'example-project-github', 
             passwordVariable: 'GIT_PASSWORD', 
             usernameVariable: "GIT_USERNAME")]) {
-              sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@https://github.com/demo125/mlops-platform.git"
+              sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@https://github.com/demo125/mlops-platform.git main"
           }
         }
       }
