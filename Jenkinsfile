@@ -7,8 +7,28 @@ pipeline {
   stages {
     stage('ls') {
       steps {
-        sh 'pwd'
-        sh 'ls -la'
+        container('kaniko-container') {
+          sh 'pwd'
+          sh 'ls -la'
+        }
+      }
+    }
+    stage('update argocd deployment') {
+      steps {
+        checkout(
+            [$class: 'GitSCM', 
+            branches: [[name: '*/main']], 
+            doGenerateSubmoduleConfigurations: false, 
+            extensions: [[$class: 'CleanBeforeCheckout']], 
+            submoduleCfg: [], 
+            userRemoteConfigs: [[url: 'https://github.com/demo125/mlops-platform.git']]]
+        )
+        sh 'ls'
+        dir('mlops-platform/dagster/base/values.yaml'){
+          sh 'cat values.yaml | grep tag: '
+          sh "sed -E 's/(tag:[ ])[0-9]+([ ]+# SED-ANCHOR-DAGSTER-VERSION)/\137\2/' values.yaml"
+          sh 'cat values.yaml | grep tag: '
+        }
       }
     }
     //   stage('Checkout') { 
