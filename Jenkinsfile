@@ -39,7 +39,9 @@ pipeline {
               git commit -m "Jenkins: updated dagster tag to ${BUILD_NUMBER} in dagster/base/values.yaml"
             """
            }
-          sh 'git push'
+          withCredentials([gitUsernamePassword(credentialsId: 'example-project-github', gitToolName: 'git-tool')]) {
+            sh 'git push'
+          }
         }
       }
     }
