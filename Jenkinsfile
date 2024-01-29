@@ -24,6 +24,7 @@ pipeline {
                 sh 'cat /kaniko/.docker/config.json'
                 sh 'executor --context=git://github.com/demo125/example-project.git --dockerfile Dockerfile.dev --destination $DOCKER_REGISTRY_URL/$JOB_BASE_NAME:$BUILD_NUMBER'
             }
+        }
       }
     }
     stage('update argocd deployment') {
