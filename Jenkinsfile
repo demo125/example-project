@@ -33,7 +33,7 @@ pipeline {
               """
           }
           sh 'cat values.yaml | grep tag: '
-          sh 'git branch -b main'
+          sh 'git checkout  -b main'
           sh 'git add values.yaml'
           script {
             sh """
