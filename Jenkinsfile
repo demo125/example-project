@@ -5,14 +5,6 @@ pipeline {
     }
   }
   stages {
-    stage('ls') {
-      steps {
-        container('kaniko-container') {
-          sh 'pwd'
-          sh 'ls -la'
-        }
-      }
-    }
     stage('build image') {
       steps {
         container('kaniko-container') {
