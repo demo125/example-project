@@ -7,7 +7,11 @@ Add to devcontainer.json or with ``ocker network connect` command
 ],
 ```
 # Add certificate to the dev container
-Download the certificate
+Download the certificate to the container:
+```
+docker exec -it -u root <image_name> bash
+```
+Then run:
 ```
 export JENKINS_URL=jenkins.mlplatform:11443
 openssl s_client -showcerts -connect $JENKINS_URL </dev/null | sed -n -e '/-.BEGIN/,/-.END/ p' > /usr/local/share/ca-certificates/my-selfsigned-cert-jenkins.crt

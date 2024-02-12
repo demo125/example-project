@@ -27,12 +27,13 @@ def dvc_dataset(
     context: AssetExecutionContext,
     dvc_fs_resource: DVCFileSystemResource,
     mlflow: ConfigurableResource,
-) -> str:
+) -> pd.DataFrame:
     dvc_fs = dvc_fs_resource.get_dvc_fs()
     dvc_fs.get("./data", ".", recursive=True)
     dataset_path = "./data/iris.csv"
     mlflow.log_param("dataset_path", dataset_path)
-    return dataset_path
+    df = pd.read_csv(dataset_path)
+    return df
 
 
 @multi_asset(
@@ -45,12 +46,13 @@ def dvc_dataset(
 )
 def loaded_dataset(
     context: AssetExecutionContext,
-    dvc_dataset: str,
+    dvc_dataset: pd.DataFrame,
     config: Configs,
     mlflow: ConfigurableResource,
 ) -> tuple[Output[pd.DataFrame], Output[pd.DataFrame]]:
-    df = pd.read_csv(dvc_dataset)
-    train_df, test_df = train_test_split(df, train_size=config.train_split_size)
+    train_df, test_df = train_test_split(
+        dvc_dataset, train_size=config.train_split_size
+    )
     mlflow.log_param("train_split_size", config.train_split_size)
     return Output(train_df, output_name="train_split"), Output(
         test_df, output_name="test_split"
