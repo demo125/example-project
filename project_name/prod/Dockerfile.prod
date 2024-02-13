@@ -15,7 +15,7 @@ RUN groupadd --gid $USER_GID $USERNAME && useradd --uid $USER_UID --gid $USER_GI
 RUN usermod -aG sudo user
 RUN apt-get update
 
-ENV PROJECT_DIR=/home/$USERNAME/example-project-pord
+ENV PROJECT_DIR=/home/$USERNAME/example-project-prod
 WORKDIR $PROJECT_DIR
 
 USER $USERNAME

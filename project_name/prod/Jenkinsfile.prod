@@ -1,55 +1,50 @@
 pipeline {
   agent {
     kubernetes {
-        inheritFrom 'kaniko-pod-template'
+        inheritFrom 'mlflow-pod-template kaniko-pod-template'
     }
   }
   stages {
+    stage('checkout'){
+        steps{
+            checkout(
+                [$class: 'GitSCM', 
+                branches: [[name: '*/main']], 
+                doGenerateSubmoduleConfigurations: false, 
+                extensions: [[$class: 'CleanBeforeCheckout']], 
+                submoduleCfg: [], 
+                userRemoteConfigs: [[url: 'https://github.com/demo125/example-project.git']]]
+            )
+        }
+    }
     stage('build image') {
       steps {
-        container('kaniko-container') {
-            // sh 'executor'
-            sh 'ls -la'
-            sh "mkdir -p /kaniko/.docker"
-            withCredentials([usernamePassword(credentialsId: 'docker-registry-credentials', passwordVariable: 'PASSWORD', usernameVariable: 'USER')]) {
-                sh "echo '{\"auths\":{\"$DOCKER_REGISTRY_URL\":{\"username\":\"$USER\",\"password\":\"$PASSWORD\"}}}' > /kaniko/.docker/config.json"
-                sh 'cat /kaniko/.docker/config.json'
-                sh 'executor --context=git://github.com/demo125/example-project.git --dockerfile Dockerfile.dev --destination $DOCKER_REGISTRY_URL/example-project:$BUILD_NUMBER'
+        container('mlflow-container') {
+            withCredentials([string(credentialsId: 'MLFLOW_S3_AWS_ACCESS_KEY_ID', variable: 'MLFLOW_S3_AWS_ACCESS_KEY_ID')]) {
+                withCredentials([string(credentialsId: 'MLFLOW_S3_AWS_SECRET_ACCESS_KEY', variable: 'MLFLOW_S3_AWS_SECRET_ACCESS_KEY')]) {
+                    sh 'pip install python-dotenv boto3==1.34.22'
+                    dir('project_name/prod'){
+                        sh 'python download_model.py'
+                        sh 'ls -l model'
+                    }
+                }
             }
+            
         }
       }
     }
     stage('update argocd deployment') {
       steps {
-        checkout(
-            [$class: 'GitSCM', 
-            branches: [[name: '*/main']], 
-            doGenerateSubmoduleConfigurations: false, 
-            extensions: [[$class: 'CleanBeforeCheckout']], 
-            submoduleCfg: [], 
-            userRemoteConfigs: [[url: 'https://github.com/demo125/mlops-platform.git']]]
-        )
-        dir('dagster/base'){
-          sh 'cat values.yaml | grep tag: '
-          script {
-              sh """
-                  sed -i -E 's/(tag:[ ])[0-9]+([ ]+# SED-ANCHOR-DAGSTER-VERSION)/\\1${BUILD_NUMBER}\\2/' values.yaml
-              """
-          }
-          sh 'cat values.yaml | grep tag: '
-          sh 'git checkout  -b main'
-          sh 'git add values.yaml'
-          script {
-            sh """
-              git commit -m "Jenkins: updated dagster tag to ${BUILD_NUMBER} in dagster/base/values.yaml"
-            """
-           }
-          withCredentials([usernamePassword(
-            credentialsId: 'example-project-github', 
-            passwordVariable: 'GIT_PASSWORD', 
-            usernameVariable: "GIT_USERNAME")]) {
-              sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/demo125/mlops-platform.git main:main"
-          }
+        container('kaniko-container') {
+            dir('project_name/prod'){
+                sh 'ls -l'
+                sh "mkdir -p /kaniko/.docker"
+                withCredentials([usernamePassword(credentialsId: 'docker-registry-credentials', passwordVariable: 'PASSWORD', usernameVariable: 'USER')]) {
+                    sh "echo '{\"auths\":{\"$DOCKER_REGISTRY_URL\":{\"username\":\"$USER\",\"password\":\"$PASSWORD\"}}}' > /kaniko/.docker/config.json"
+                    sh 'cat /kaniko/.docker/config.json'
+                    sh 'executor --context=. --dockerfile Dockerfile.prod --destination $DOCKER_REGISTRY_URL/example-project-prod:$BUILD_NUMBER'
+                }
+            }
         }
       }
     }
