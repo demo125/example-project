@@ -1,0 +1,33 @@
+FROM public.ecr.aws/docker/library/python:3.10-slim-bullseye
+
+RUN apt-get update
+RUN python3 -m pip install --upgrade pip
+RUN apt-get install git -y
+#edit tmp folder
+RUN chmod 1777 /tmp
+RUN chmod 1777 /var/tmp
+
+#create vscode user
+ARG USERNAME=user
+ARG USER_UID=1000
+ARG USER_GID=$USER_UID
+RUN groupadd --gid $USER_GID $USERNAME && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME 
+RUN usermod -aG sudo user
+RUN apt-get update
+
+ENV PROJECT_DIR=/home/$USERNAME/example-project-pord
+WORKDIR $PROJECT_DIR
+
+USER $USERNAME
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+ADD . $PROJECT_DIR
+RUN pip install -r requirements.txt
+
+ENV PATH $PATH:/home/$USERNAME/.local/bin
+
+USER root
+RUN chown -R $USERNAME:$USERNAME $PROJECT_DIR
+USER $USERNAME
+ENTRYPOINT exec ./run.sh

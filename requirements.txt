@@ -14,3 +14,9 @@ dvc==3.39.0
 dvc-s3
 dagster-mlflow==0.22.0
 flatdict==4.0.1
+fastapi==0.109.2
+uvicorn==0.27.0
+evidently==0.4.15
+scikit-learn==1.4.0
+pandas==2.2.0
+numpy==1.26.3
