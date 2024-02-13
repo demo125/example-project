@@ -63,7 +63,7 @@ pipeline {
             sh 'cat deployment.yaml | grep image: '
             script {
                 sh """
-                    sed -i -E 's/:[0-9]+([ ]+# SED-ANCHOR-APP-VERSION)/\\1${BUILD_NUMBER}\\2/' deployment.yaml
+                    sed -i -E 's/(:)[0-9]+(.+# SED-ANCHOR-APP-VERSION)/\\1${BUILD_NUMBER}\\2/' deployment.yaml
                 """
             }
             sh 'cat deployment.yaml | grep image: '
