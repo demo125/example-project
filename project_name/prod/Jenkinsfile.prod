@@ -17,7 +17,7 @@ pipeline {
             )
         }
     }
-    stage('build image') {
+    stage('download model') {
       steps {
         container('mlflow-container') {
             withCredentials([string(credentialsId: 'MLFLOW_S3_AWS_ACCESS_KEY_ID', variable: 'MLFLOW_S3_AWS_ACCESS_KEY_ID')]) {
@@ -33,7 +33,7 @@ pipeline {
         }
       }
     }
-    stage('update argocd deployment') {
+    stage('build image') {
       steps {
         container('kaniko-container') {
             dir('project_name/prod'){
