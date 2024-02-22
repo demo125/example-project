@@ -4,19 +4,21 @@ from dagster import AssetSelection, Definitions, define_asset_job
 from dagster_mlflow import mlflow_tracking
 from dotenv import load_dotenv
 
-from .utils import set_all_seeds
-
 # from .jobs import train_model
 from .assets import (
+    classification_report,
     classifier,
+    datadrift_report,
     dvc_dataset,
     eval_classifier,
+    evidently_ai,
     loaded_dataset,
     model_predict_from_path,
     model_predict_from_registry,
     predict,
 )
 from .resources import DVCFileSystemResource
+from .utils import set_all_seeds
 
 # dagster loads .env file automatically, loading env manualy is needed for pytest test autodiscovery
 load_dotenv()
@@ -47,7 +49,7 @@ mlflow_resoruce = mlflow_tracking.configured(
 )
 
 training_asset_job = define_asset_job(
-    name="train_model", selection=AssetSelection.groups("training")
+    name="train_model", selection=AssetSelection.groups("training", "evidently_report")
 )
 prediction_asset_job = define_asset_job(
     name="prediction", selection=AssetSelection.groups("prediction")
@@ -62,11 +64,14 @@ defs = Definitions(
         predict,
         model_predict_from_registry,
         model_predict_from_path,
+        classification_report,
+        datadrift_report,
+        evidently_ai,
     ],
     jobs=[training_asset_job, prediction_asset_job],
     resources={
         "dvc_fs_resource": DVCFileSystemResource(),
-        "mlflow": mlflow_resoruce
+        "mlflow": mlflow_resoruce,
         # "minio": MinioResource(
         #     endpoint_url=os.environ["SOURCE_TO_LAKE_MINIO_ENDPOINT_URL"],
         #     aws_key_id=os.environ["SOURCE_TO_LAKE_MINIO_AWS_KEY_ID"],

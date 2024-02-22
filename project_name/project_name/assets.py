@@ -11,11 +11,14 @@ from dagster import (
     asset,
     multi_asset,
 )
+from evidently.ui.base import Project
+from evidently.ui.workspace import Workspace
 from sklearn.metrics import classification_report, f1_score
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
 
 from .configs import Configs
+from .evidently_ai import get_classification_report, get_data_quality_test
 from .resources import DVCFileSystemResource
 
 
@@ -141,3 +144,87 @@ def model_predict_from_path(
     return predict_model(
         context=context, classifier=classifier, csv_data=config.csv_data
     )
+
+
+@multi_asset(
+    description="Creates or fetches evidently ai project and workspace",
+    group_name="evidently_report",
+    outs={
+        "evidently_ai_iris_project": AssetOut(),
+        "evidently_ai_iris_workspace": AssetOut(),
+    },
+)
+def evidently_ai(
+    context: AssetExecutionContext,
+) -> tuple[Output[Project], Output[Workspace]]:
+
+    workspace = Workspace.create("./data/evidently")
+    projects = {p.name: p for p in workspace.list_projects()}
+    if "iris" not in projects:
+        project = workspace.create_project("iris")
+    else:
+        project = projects["iris"]
+
+    return (
+        Output(project, output_name="evidently_ai_iris_project"),
+        Output(workspace, output_name="evidently_ai_iris_workspace"),
+    )
+
+
+@asset(group_name="evidently_report")
+def classification_report(
+    context: AssetExecutionContext,
+    evidently_ai_iris_project: Project,
+    evidently_ai_iris_workspace: Workspace,
+    test_split: pd.DataFrame,
+    classifier: DecisionTreeClassifier,
+) -> str:
+
+    test_predictions = classifier.predict(
+        test_split[["sepal.length", "sepal.width", "petal.length", "petal.width"]]
+    )
+    test_split["predictions"] = test_predictions
+    classification_report = get_classification_report(
+        current_data=test_split, reference_data=None
+    )
+    html = classification_report.get_html()
+    classification_report.save_json("./data/classification_report.json")
+    classification_report.save_html("./data/classification_report.html")
+
+    evidently_ai_iris_workspace.add_report(
+        project_id=evidently_ai_iris_project.id, report=classification_report
+    )
+
+    return html
+
+
+@asset(group_name="evidently_report")
+def datadrift_report(
+    context: AssetExecutionContext,
+    train_split: pd.DataFrame,
+    evidently_ai_iris_project: Project,
+    evidently_ai_iris_workspace: Workspace,
+) -> str:
+
+    data_quality_report = get_data_quality_test(
+        current_data=train_split, reference_data=None
+    )
+    html = data_quality_report.get_html()
+    data_quality_report.save_json("./data/data_quality_report.json")
+    data_quality_report.save_html("./data/data_quality_report.html")
+
+    evidently_ai_iris_workspace.add_report(
+        project_id=evidently_ai_iris_project.id, report=data_quality_report
+    )
+
+    return html
+
+
+# @asset(group_name="evidently_report")
+# def model_predict_from_path(
+#     context: AssetExecutionContext, config: Configs, mlflow: ConfigurableResource
+# ) -> Output[list[str]]:
+#     classifier = mlflow.sklearn.load_model(config.run_model_path)
+#     return predict_model(
+#         context=context, classifier=classifier, csv_data=config.csv_data
+#     )
