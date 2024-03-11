@@ -33,7 +33,7 @@ pipeline {
           sh 'cat values.yaml | grep tag: '
           script {
               sh """
-                  sed -i -E 's/(tag:[ ])[0-9]+([ ]+# SED-ANCHOR-DAGSTER-VERSION)/\\11\\2/' values.yaml
+                  sed -i -E 's/(tag:[ ])[0-9]+([ ]+# SED-ANCHOR-DAGSTER-VERSION)/\\1${BUILD_NUMBER}\\2/' values.yaml
               """
           }
           sh 'cat values.yaml | grep tag: '
@@ -41,7 +41,7 @@ pipeline {
           sh 'git add values.yaml'
           script {
             sh """
-              git commit -m "Jenkins: updated dagster tag to 1 in dagster/base/values.yaml"
+              git commit -m "Jenkins: updated dagster tag to ${BUILD_NUMBER} in dagster/base/values.yaml"
             """
            }
           withCredentials([usernamePassword(
